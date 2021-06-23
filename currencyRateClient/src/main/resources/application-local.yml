@@ -1,0 +1,5 @@
+cbr-rate-client:
+  url: "http://localhost:8081/api/v1/currencyRate"
+
+
+

@@ -1,0 +1,20 @@
+jib {
+    container.creationTime = 'USE_CURRENT_TIMESTAMP'
+    from {
+        image = 'bellsoft/liberica-openjdk-alpine-musl:15.0.2-10-x86_64'
+    }
+    to {
+        tags = ['v1', 'latest']
+        image = 'registry.gitlab.com/petrelevich/dockerregistry/cbr-rate'
+        auth {
+            username = gitlabUser
+            password = gitlabPassword
+        }
+    }
+}
+// ./gradlew jibDockerBuild
+
+//docker login registry.gitlab.com
+//docker run -p 8080:8080 registry.gitlab.com/petrelevich/dockerregistry/cbrRate
+
+//docker push registry.gitlab.com/petrelevich/dockerregistry/cbrRate:latest
