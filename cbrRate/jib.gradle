@@ -15,6 +15,6 @@ jib {
 // ./gradlew jibDockerBuild
 
 //docker login registry.gitlab.com
-//docker run -p 8080:8080 registry.gitlab.com/petrelevich/dockerregistry/cbrRate
+//docker run -p 8080:8080 registry.gitlab.com/petrelevich/dockerregistry/cbr-rate
 
-//docker push registry.gitlab.com/petrelevich/dockerregistry/cbrRate:latest
+//docker push registry.gitlab.com/petrelevich/dockerregistry/cbr-rate:latest
