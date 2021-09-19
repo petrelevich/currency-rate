@@ -1,0 +1,21 @@
+server:
+  port: 8082
+
+management:
+  server:
+    port: 8092
+  endpoints:
+    enabled-by-default: false
+  endpoint:
+    health:
+      enabled: true
+      probes:
+        enabled: true
+
+app:
+  rest:
+    api:
+      prefix: /api
+  telegram:
+    url: https://api.telegram.org
+    refresh-rate-ms: 3000
