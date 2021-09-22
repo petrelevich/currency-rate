@@ -1,11 +1,12 @@
 package ru.cbrrate.services;
 
 import org.junit.jupiter.api.Test;
+import ru.cbrrate.clients.TelegramClient;
 import ru.cbrrate.model.GetUpdatesRequest;
 import ru.cbrrate.model.GetUpdatesResponse;
 import ru.cbrrate.model.SendMessageRequest;
 import ru.cbrrate.services.processors.MessageTextProcessor;
-import ru.cbrrate.services.processors.MessageTextProcessorResult;
+import ru.cbrrate.model.MessageTextProcessorResult;
 
 import java.util.List;
 import java.util.Random;
@@ -27,7 +28,7 @@ class TelegramServiceImplTest {
 
         //first run
         //given
-        var request1 = new GetUpdatesRequest(1);
+        var request1 = new GetUpdatesRequest(0);
         var response1 = makeGetUpdatesResponse(1, text);
         when(telegramClient.getUpdates(request1)).thenReturn(response1);
 
@@ -43,7 +44,7 @@ class TelegramServiceImplTest {
 
         verify(telegramClient).sendMessage(sendMessageRequest1);
         verify(telegramClient).sendMessage(sendMessageRequest2);
-        verify(lastUpdateIdKeeper).set(response1.getResult().get(1).getUpdateId());
+        verify(lastUpdateIdKeeper).set(response1.getResult().get(1).getUpdateId() + 1);
 
         //second run
         //given
@@ -66,11 +67,11 @@ class TelegramServiceImplTest {
     }
 
     private GetUpdatesResponse makeGetUpdatesResponse(long updateId, String text) {
-        var from = new GetUpdatesResponse.From(506L,   false, "Ivan" ,"Petrov","en");
-        var chat = new GetUpdatesResponse.Chat(506L,"Ivan" ,"Petrov","private");
+        var from = new GetUpdatesResponse.From(506L, false, "Ivan", "Petrov", "en");
+        var chat = new GetUpdatesResponse.Chat(506L, "Ivan", "Petrov", "private");
         var random = new Random();
-        var message1 = new GetUpdatesResponse.Message(random.nextLong(), from, chat,1631970287,text);
-        var message2 = new GetUpdatesResponse.Message(random.nextLong(), from, chat,1631970287,text);
+        var message1 = new GetUpdatesResponse.Message(random.nextLong(), from, chat, 1631970287, text);
+        var message2 = new GetUpdatesResponse.Message(random.nextLong(), from, chat, 1631970287, text);
 
         return new GetUpdatesResponse(true, List.of(new GetUpdatesResponse.Response(updateId, message1),
                 new GetUpdatesResponse.Response(updateId + 1, message2)));

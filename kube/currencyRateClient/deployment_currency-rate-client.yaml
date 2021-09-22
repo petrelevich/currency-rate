@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: currency-rate-client
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: currency-rate-client

@@ -1,7 +1,7 @@
 package ru.cbrrate.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
+import ru.cbrrate.clients.TelegramClient;
 import ru.cbrrate.model.GetUpdatesRequest;
 import ru.cbrrate.model.GetUpdatesResponse;
 import ru.cbrrate.model.SendMessageRequest;
@@ -16,7 +16,7 @@ public class TelegramServiceImpl implements TelegramService{
     private final LastUpdateIdKeeper lastUpdateIdKeeper;
 
     public TelegramServiceImpl(TelegramClient telegramClient,
-                               @Qualifier("messageTextProcessorGeneral") MessageTextProcessor messageTextProcessor,
+                               MessageTextProcessor messageTextProcessor,
                                LastUpdateIdKeeper lastUpdateIdKeeper) {
         this.telegramClient = telegramClient;
         this.processorGeneral = messageTextProcessor;
@@ -25,14 +25,18 @@ public class TelegramServiceImpl implements TelegramService{
 
     @Override
     public void getUpdates() {
-        log.info("getUpdates begin");
-        var offset = lastUpdateIdKeeper.get();
-        var request = new GetUpdatesRequest(offset);
-        var response = telegramClient.getUpdates(request);
-        var lastUpdateId = processResponse(response);
-        lastUpdateId = lastUpdateId == 0 ? offset : lastUpdateId + 1;
-        lastUpdateIdKeeper.set(lastUpdateId);
-        log.info("getUpdates end, lastUpdateId:{}", lastUpdateId);
+        try {
+            log.info("getUpdates begin");
+            var offset = lastUpdateIdKeeper.get();
+            var request = new GetUpdatesRequest(offset);
+            var response = telegramClient.getUpdates(request);
+            var lastUpdateId = processResponse(response);
+            lastUpdateId = lastUpdateId == 0 ? offset : lastUpdateId + 1;
+            lastUpdateIdKeeper.set(lastUpdateId);
+            log.info("getUpdates end, lastUpdateId:{}", lastUpdateId);
+        } catch (Exception ex) {
+            log.error("unhandled exception", ex);
+        }
     }
 
     private long processResponse(GetUpdatesResponse response) {

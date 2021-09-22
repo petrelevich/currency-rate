@@ -2,6 +2,7 @@ package ru.cbrrate.services.processors;
 
 
 import org.springframework.stereotype.Service;
+import ru.cbrrate.model.MessageTextProcessorResult;
 
 import static ru.cbrrate.services.processors.Messages.EXPECTED_FORMAT_MESSAGE;
 

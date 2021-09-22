@@ -2,12 +2,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cbr-rate
+  name: currency-rate-bot
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: cbr-rate
+      app: currency-rate-bot
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -16,21 +16,23 @@ spec:
   template:
     metadata:
       labels:
-        app: cbr-rate
+        app: currency-rate-bot
     spec:
       containers:
-        - image: registry.gitlab.com/petrelevich/dockerregistry/cbr-rate:v1
-          name: cbr-rate
+        - image: registry.gitlab.com/petrelevich/dockerregistry/currency-rate-bot:v7
+          name: currency-rate-bot
           ports:
-            - containerPort: 8081
+            - containerPort: 8082
           envFrom:
             - configMapRef:
                 name: currency-rate-config
+            - secretRef:
+                name: secret-currency-rate-config
           readinessProbe:
             failureThreshold: 3
             httpGet:
               path: /actuator/health/readiness
-              port: 8091
+              port: 8092
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
@@ -38,7 +40,7 @@ spec:
             failureThreshold: 3
             httpGet:
               path: /actuator/health/liveness
-              port: 8091
+              port: 8092
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1

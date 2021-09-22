@@ -1,4 +1,4 @@
-package ru.cbrrate.services;
+package ru.cbrrate.clients;
 
 import ru.cbrrate.model.GetUpdatesRequest;
 import ru.cbrrate.model.GetUpdatesResponse;

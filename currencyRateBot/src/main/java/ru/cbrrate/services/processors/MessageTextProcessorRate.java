@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.cbrrate.clients.CurrencyRateClient;
+import ru.cbrrate.model.MessageTextProcessorResult;
+import ru.cbrrate.services.DateTimeProvider;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -64,7 +66,12 @@ public class MessageTextProcessorRate implements MessageTextProcessor {
             }
         }
 
-        var rate = currencyRateClient.getCurrencyRate(rateType, currency.toUpperCase(), date);
+        if (rateType == null || currency == null) {
+            log.error("rateType:{} or currency:{} is null", rateType, currency);
+            throw new IllegalArgumentException("rateType:" + rateType + " or currency:" + currency + " is null");
+        }
+
+        var rate = currencyRateClient.getCurrencyRate(rateType.toUpperCase(), currency.toUpperCase(), date);
         return new MessageTextProcessorResult(rate.getValue(), null);
     }
 

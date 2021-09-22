@@ -1,15 +1,15 @@
-package ru.cbrrate.services;
+package ru.cbrrate.clients;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.cbrrate.clients.HttpClientJdk;
 import ru.cbrrate.config.TelegramClientConfig;
 import ru.cbrrate.model.GetUpdatesRequest;
 import ru.cbrrate.model.GetUpdatesResponse;
 import ru.cbrrate.model.SendMessageRequest;
+import ru.cbrrate.services.TelegramException;
 
 
 @Service

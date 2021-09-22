@@ -1,4 +1,4 @@
-package ru.cbrrate.services.processors;
+package ru.cbrrate.services;
 
 import java.time.LocalDateTime;
 

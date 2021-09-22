@@ -2,6 +2,7 @@ package ru.cbrrate.services;
 
 import org.junit.jupiter.api.Test;
 import ru.cbrrate.clients.HttpClientJdk;
+import ru.cbrrate.clients.TelegramClientImpl;
 import ru.cbrrate.config.JsonConfig;
 import ru.cbrrate.config.TelegramClientConfig;
 import ru.cbrrate.model.GetUpdatesRequest;
