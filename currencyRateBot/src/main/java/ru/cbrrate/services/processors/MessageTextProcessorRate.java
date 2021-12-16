@@ -3,6 +3,7 @@ package ru.cbrrate.services.processors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 import ru.cbrrate.clients.CurrencyRateClient;
 import ru.cbrrate.model.MessageTextProcessorResult;
 import ru.cbrrate.services.DateTimeProvider;
@@ -25,13 +26,13 @@ public class MessageTextProcessorRate implements MessageTextProcessor {
     private final DateTimeProvider dateTimeProvider;
 
     @Override
-    public MessageTextProcessorResult process(String msgText) {
+    public Mono<MessageTextProcessorResult> process(String msgText) {
         log.info("msgText:{}", msgText);
 
         var textParts = msgText.split(" ");
 
         if (textParts.length < 1 || textParts.length > 3) {
-            return new MessageTextProcessorResult(null, Messages.EXPECTED_FORMAT_MESSAGE.getText());
+            return Mono.just(new MessageTextProcessorResult(null, Messages.EXPECTED_FORMAT_MESSAGE.getText()));
         }
 
         String rateType = null;
@@ -62,7 +63,7 @@ public class MessageTextProcessorRate implements MessageTextProcessor {
             } catch (Exception ex) {
                 log.error("parsing error, string:{}", dateAsString, ex);
 
-                return new MessageTextProcessorResult(null, Messages.DATA_FORMAT_MESSAGE.getText());
+                return Mono.just(new MessageTextProcessorResult(null, Messages.DATA_FORMAT_MESSAGE.getText()));
             }
         }
 
@@ -71,8 +72,8 @@ public class MessageTextProcessorRate implements MessageTextProcessor {
             throw new IllegalArgumentException("rateType:" + rateType + " or currency:" + currency + " is null");
         }
 
-        var rate = currencyRateClient.getCurrencyRate(rateType.toUpperCase(), currency.toUpperCase(), date);
-        return new MessageTextProcessorResult(rate.getValue(), null);
+        return currencyRateClient.getCurrencyRate(rateType.toUpperCase(), currency.toUpperCase(), date)
+                .map(rate -> new MessageTextProcessorResult(rate.getValue(), null));
     }
 
     private LocalDate parseDate(String dateAsString) {

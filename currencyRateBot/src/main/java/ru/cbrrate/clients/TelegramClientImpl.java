@@ -17,7 +17,7 @@ import ru.cbrrate.services.TelegramException;
 @RequiredArgsConstructor
 public class TelegramClientImpl implements TelegramClient {
 
-    private final HttpClientJdk httpClientJdk;
+    private final HttpClient httpClientJdk;
     private final ObjectMapper objectMapper;
     private final TelegramClientConfig clientConfig;
 

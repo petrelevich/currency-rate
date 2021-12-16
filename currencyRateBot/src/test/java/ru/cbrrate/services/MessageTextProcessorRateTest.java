@@ -1,15 +1,17 @@
 package ru.cbrrate.services;
 
 import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 import ru.cbrrate.clients.CurrencyRateClient;
 import ru.cbrrate.model.CurrencyRate;
+import ru.cbrrate.model.MessageTextProcessorResult;
 import ru.cbrrate.services.processors.MessageTextProcessorRate;
 import ru.cbrrate.services.processors.Messages;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -20,8 +22,9 @@ class MessageTextProcessorRateTest {
         //given
         var currencyRateClient = mock(CurrencyRateClient.class);
         var currencyRate = new CurrencyRate("USD", "1", "49.4");
+        var resultExpected = new MessageTextProcessorResult(currencyRate.getValue(), null);
         when(currencyRateClient.getCurrencyRate("CBR", "USD", LocalDate.of(2021, 2, 3)))
-                .thenReturn(currencyRate);
+                .thenReturn(Mono.just(currencyRate));
 
         var messageTextProcessor = new MessageTextProcessorRate(currencyRateClient,
                 () -> LocalDateTime.of(2021, 2, 3,1,1,1));
@@ -31,8 +34,11 @@ class MessageTextProcessorRateTest {
         var result = messageTextProcessor.process(msg);
 
         //then
-        assertThat(result.getFailReply()).isNull();
-        assertThat(result.getOkReply()).isEqualTo(currencyRate.getValue());
+        StepVerifier
+                .create(result)
+                .expectNext(resultExpected)
+                .expectComplete()
+                .verify();
     }
 
     @Test
@@ -40,8 +46,9 @@ class MessageTextProcessorRateTest {
         //given
         var currencyRateClient = mock(CurrencyRateClient.class);
         var currencyRate = new CurrencyRate("USD", "1", "49.4");
+        var resultExpected = new MessageTextProcessorResult(currencyRate.getValue(), null);
         when(currencyRateClient.getCurrencyRate("CBR", "USD", LocalDate.of(2021, 2, 3)))
-                .thenReturn(currencyRate);
+                .thenReturn(Mono.just(currencyRate));
 
         var messageTextProcessor = new MessageTextProcessorRate(currencyRateClient,
                 () -> LocalDateTime.of(2021, 2, 3,1,1,1));
@@ -51,8 +58,11 @@ class MessageTextProcessorRateTest {
         var result = messageTextProcessor.process(msg);
 
         //then
-        assertThat(result.getFailReply()).isNull();
-        assertThat(result.getOkReply()).isEqualTo(currencyRate.getValue());
+        StepVerifier
+                .create(result)
+                .expectNext(resultExpected)
+                .expectComplete()
+                .verify();
     }
 
     @Test
@@ -60,8 +70,9 @@ class MessageTextProcessorRateTest {
         //given
         var currencyRateClient = mock(CurrencyRateClient.class);
         var currencyRate = new CurrencyRate("USD", "1", "49.4");
+        var resultExpected = new MessageTextProcessorResult(currencyRate.getValue(), null);
         when(currencyRateClient.getCurrencyRate("CBR", "USD", LocalDate.of(2021, 2, 3)))
-                .thenReturn(currencyRate);
+                .thenReturn(Mono.just(currencyRate));
 
         var messageTextProcessor = new MessageTextProcessorRate(currencyRateClient,
                 () -> LocalDateTime.of(2021, 2, 3,1,1,1));
@@ -71,8 +82,11 @@ class MessageTextProcessorRateTest {
         var result = messageTextProcessor.process(msg);
 
         //then
-        assertThat(result.getFailReply()).isNull();
-        assertThat(result.getOkReply()).isEqualTo(currencyRate.getValue());
+        StepVerifier
+                .create(result)
+                .expectNext(resultExpected)
+                .expectComplete()
+                .verify();
     }
 
     @Test
@@ -80,8 +94,9 @@ class MessageTextProcessorRateTest {
         //given
         var currencyRateClient = mock(CurrencyRateClient.class);
         var currencyRate = new CurrencyRate("USD", "1", "49.4");
+        var resultExpected = new MessageTextProcessorResult(null, Messages.DATA_FORMAT_MESSAGE.getText());
         when(currencyRateClient.getCurrencyRate("CBR", "USD", LocalDate.of(2021, 2, 3)))
-                .thenReturn(currencyRate);
+                .thenReturn(Mono.just(currencyRate));
 
         var messageTextProcessor = new MessageTextProcessorRate(currencyRateClient,
                 () -> LocalDateTime.of(2021, 2, 3,1,1,1));
@@ -91,8 +106,11 @@ class MessageTextProcessorRateTest {
         var result = messageTextProcessor.process(msg);
 
         //then
-        assertThat(result.getOkReply()).isNull();
-        assertThat(result.getFailReply()).isEqualTo(Messages.DATA_FORMAT_MESSAGE.getText());
+        StepVerifier
+                .create(result)
+                .expectNext(resultExpected)
+                .expectComplete()
+                .verify();
     }
 
     @Test
@@ -100,8 +118,9 @@ class MessageTextProcessorRateTest {
         //given
         var currencyRateClient = mock(CurrencyRateClient.class);
         var currencyRate = new CurrencyRate("USD", "1", "49.4");
+        var resultExpected = new MessageTextProcessorResult(null, Messages.EXPECTED_FORMAT_MESSAGE.getText());
         when(currencyRateClient.getCurrencyRate("CBR", "USD", LocalDate.of(2021, 2, 3)))
-                .thenReturn(currencyRate);
+                .thenReturn(Mono.just(currencyRate));
 
         var messageTextProcessor = new MessageTextProcessorRate(currencyRateClient,
                 () -> LocalDateTime.of(2021, 2, 3,1,1,1));
@@ -111,8 +130,10 @@ class MessageTextProcessorRateTest {
         var result = messageTextProcessor.process(msg);
 
         //then
-        assertThat(result.getOkReply()).isNull();
-        assertThat(result.getFailReply()).isEqualTo(Messages.EXPECTED_FORMAT_MESSAGE.getText());
+        StepVerifier
+                .create(result)
+                .expectNext(resultExpected)
+                .expectComplete()
+                .verify();
     }
-
 }

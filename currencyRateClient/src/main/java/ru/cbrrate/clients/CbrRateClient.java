@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 import ru.cbrrate.config.CbrRateClientConfig;
 import ru.cbrrate.model.CurrencyRate;
 import java.time.LocalDate;
@@ -21,18 +22,26 @@ public class CbrRateClient implements RateClient {
     private final ObjectMapper objectMapper;
 
     @Override
-    public CurrencyRate getCurrencyRate(String currency, LocalDate date) {
+    public Mono<CurrencyRate> getCurrencyRate(String currency, LocalDate date) {
         log.info("getCurrencyRate currency:{}, date:{}", currency, date);
         var urlWithParams = String.format("%s/%s/%s", config.getUrl(), currency, DATE_FORMATTER.format(date));
 
         try {
-            var response = httpClient.performRequest(urlWithParams);
-            return objectMapper.readValue(response, CurrencyRate.class);
+            return httpClient.performRequest(urlWithParams)
+                    .map(this::parse);
         } catch (HttpClientException ex) {
             throw new RateClientException("Error from Cbr Client host:" + ex.getMessage());
         } catch (Exception ex) {
             log.error("Getting currencyRate error, currency:{}, date:{}", currency, date, ex);
             throw new RateClientException("Can't get currencyRate. currency:" + currency + ", date:" + date);
+        }
+    }
+
+    private CurrencyRate parse(String rateAsString) {
+        try {
+            return objectMapper.readValue(rateAsString, CurrencyRate.class);
+        } catch (Exception ex) {
+            throw new RateClientException("Can't parse string:" + rateAsString);
         }
     }
 }

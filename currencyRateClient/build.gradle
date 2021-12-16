@@ -6,11 +6,11 @@ plugins {
 
 apply from: 'jib.gradle'
 
-sourceCompatibility = JavaVersion.VERSION_15
-targetCompatibility = JavaVersion.VERSION_15
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'ch.qos.logback:logback-classic'
     implementation 'org.ehcache:ehcache'

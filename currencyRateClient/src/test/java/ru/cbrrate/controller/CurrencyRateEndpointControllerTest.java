@@ -2,29 +2,22 @@ package ru.cbrrate.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.web.servlet.MockMvc;
-import ru.cbrrate.clients.CbrRateClient;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
 import ru.cbrrate.clients.HttpClient;
-import ru.cbrrate.config.ApplicationConfig;
 import ru.cbrrate.config.CbrRateClientConfig;
-import ru.cbrrate.config.JsonConfig;
-import ru.cbrrate.services.CurrencyRateEndpointService;
-import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(CurrencyRateEndpointController.class)
-@Import({ApplicationConfig.class, JsonConfig.class, CurrencyRateEndpointService.class, CbrRateClient.class})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CurrencyRateEndpointControllerTest {
 
     @Autowired
-    MockMvc mockMvc;
+    private WebTestClient webTestClient;
 
     @Autowired
     CbrRateClientConfig config;
@@ -33,7 +26,7 @@ class CurrencyRateEndpointControllerTest {
     HttpClient httpClient;
 
     @Test
-    void getCurrencyRateTest() throws Exception {
+    void getCurrencyRateTest()  {
         //given
         var type = "CBR";
         var currency = "EUR";
@@ -41,12 +34,17 @@ class CurrencyRateEndpointControllerTest {
 
         var url = String.format("%s/%s/%s", config.getUrl(), currency, date);
         when(httpClient.performRequest(url))
-                .thenReturn("{\"numCode\":\"978\",\"charCode\":\"EUR\",\"nominal\":\"1\",\"name\":\"Евро\",\"value\":\"89,4461\"}");
+                .thenReturn(Mono.just("{\"numCode\":\"978\",\"charCode\":\"EUR\",\"nominal\":\"1\",\"name\":\"Евро\",\"value\":\"89,4461\"}"));
         //when
-        var result = mockMvc.perform(get(String.format("/api/v1/currencyRate/%s/%s/%s", type, currency, date)))
-                .andExpect(status().isOk())
-                .andReturn().getResponse()
-                .getContentAsString(StandardCharsets.UTF_8);
+
+        var result = webTestClient
+                .get().uri(String.format("/api/v1/currencyRate/%s/%s/%s", type, currency, date))
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .returnResult(String.class)
+                .getResponseBody()
+                .blockLast();
 
         //then
         assertThat(result).isEqualTo("{\"charCode\":\"EUR\",\"nominal\":\"1\",\"value\":\"89,4461\"}");

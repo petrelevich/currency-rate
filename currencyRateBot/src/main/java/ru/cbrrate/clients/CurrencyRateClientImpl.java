@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 import ru.cbrrate.config.CurrencyRateClientConfig;
 import ru.cbrrate.model.CurrencyRate;
 
@@ -18,17 +19,18 @@ public class CurrencyRateClientImpl implements CurrencyRateClient {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
     private final CurrencyRateClientConfig config;
-    private final HttpClient httpClient;
+
+    private final HttpClientReactive httpClient;
     private final ObjectMapper objectMapper;
 
     @Override
-    public CurrencyRate getCurrencyRate(String rateType, String currency, LocalDate date) {
+    public Mono<CurrencyRate> getCurrencyRate(String rateType, String currency, LocalDate date) {
         log.info("getCurrencyRate rateType:{}, currency:{}, date:{}", rateType, currency, date);
         var urlWithParams = String.format("%s/%s/%s/%s", config.getUrl(), rateType, currency, DATE_FORMATTER.format(date));
 
         try {
-            var response = httpClient.performRequest(urlWithParams);
-            return objectMapper.readValue(response, CurrencyRate.class);
+            return httpClient.performRequest(urlWithParams)
+                    .map(this::parse);
         } catch (HttpClientException ex) {
             throw new CurrencyRateClientException("Error from Cbr Client host:" + ex.getMessage());
         } catch (Exception ex) {
@@ -37,5 +39,12 @@ public class CurrencyRateClientImpl implements CurrencyRateClient {
         }
     }
 
+    private CurrencyRate parse(String rateAsString) {
+        try {
+            return objectMapper.readValue(rateAsString, CurrencyRate.class);
+        } catch (Exception ex) {
+            throw new CurrencyRateClientException("Can't parse string:" + rateAsString);
+        }
+    }
 
 }

@@ -3,6 +3,7 @@ package ru.cbrrate.services;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 import ru.cbrrate.clients.RateClient;
 
 import ru.cbrrate.model.CurrencyRate;
@@ -22,7 +23,7 @@ public class CurrencyRateEndpointService {
         this.clients = clients;
     }
 
-    public CurrencyRate getCurrencyRate(RateType rateType, String currency, LocalDate date) {
+    public Mono<CurrencyRate> getCurrencyRate(RateType rateType, String currency, LocalDate date) {
         log.info("getCurrencyRate. rateType:{}, currency:{}, date:{}", rateType, currency, date);
         var client = clients.get(rateType.getServiceName());
         return client.getCurrencyRate(currency, date);

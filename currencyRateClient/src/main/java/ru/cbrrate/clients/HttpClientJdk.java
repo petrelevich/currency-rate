@@ -1,7 +1,10 @@
 package ru.cbrrate.clients;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.net.http.HttpRequest;
@@ -10,21 +13,25 @@ import java.net.http.HttpResponse;
 @Service
 @Slf4j
 public class HttpClientJdk implements HttpClient {
+
+    private final WebClient.Builder webBuilder;
+
+    public HttpClientJdk(WebClient.Builder webBuilder) {
+        this.webBuilder = webBuilder;
+    }
+
     @Override
-    public String performRequest(String url) {
+    public Mono<String> performRequest(String url) {
         log.info("http request, url:{}", url);
-        var client = java.net.http.HttpClient.newHttpClient();
-        var request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .build();
+        var client = webBuilder.baseUrl(url).build();
         try {
-            var response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            return response.body();
+            return client.get()
+                    .accept(MediaType.APPLICATION_JSON)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .doOnError(error -> log.error("Http request error, url:{}", url, error))
+                    .doOnNext(val -> log.info("val:{}", val));
         } catch (Exception ex) {
-            if (ex instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
-            log.error("Http request error, url:{}", url, ex);
             throw new HttpClientException(ex.getMessage());
         }
     }

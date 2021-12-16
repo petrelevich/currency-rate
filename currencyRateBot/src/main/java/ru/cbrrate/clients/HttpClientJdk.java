@@ -21,15 +21,6 @@ public class HttpClientJdk implements HttpClient {
         return doRequest(url, request);
     }
 
-    @Override
-    public String performRequest(String url) {
-        log.info("http request, url:{}", url);
-        var request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .build();
-        return doRequest(url, request);
-    }
-
     private String doRequest(String url, HttpRequest request) {
         try {
             var client = java.net.http.HttpClient.newHttpClient();

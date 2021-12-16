@@ -1,13 +1,13 @@
 plugins {
     id 'idea'
-    id "io.spring.dependency-management" version "1.0.11.RELEASE"
-    id 'org.springframework.boot' version '2.5.1' apply false
-    id 'com.google.cloud.tools.jib' version '3.1.1' apply false
+    id 'io.spring.dependency-management' version "1.0.11.RELEASE"
+    id 'org.springframework.boot' version '2.6.1' apply false
+    id 'com.google.cloud.tools.jib' version '3.1.4' apply false
 }
 
 idea {
     project {
-        languageLevel = 15
+        languageLevel = 17
     }
     module {
         downloadJavadoc = true
@@ -26,7 +26,7 @@ allprojects {
     dependencyManagement {
         dependencies {
             imports {
-                mavenBom("org.springframework.boot:spring-boot-dependencies:2.5.1")
+                mavenBom("org.springframework.boot:spring-boot-dependencies:2.6.1")
             }
         }
     }

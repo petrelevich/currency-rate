@@ -2,7 +2,7 @@ package ru.cbrrate.clients;
 
 import reactor.core.publisher.Mono;
 
-public interface HttpClient {
+public interface HttpClientReactive {
 
     Mono<String> performRequest(String url);
 }

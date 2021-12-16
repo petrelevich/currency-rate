@@ -1,7 +1,8 @@
 package ru.cbrrate.services.processors;
 
+import reactor.core.publisher.Mono;
 import ru.cbrrate.model.MessageTextProcessorResult;
 
 public interface MessageTextProcessor {
-    MessageTextProcessorResult process(String msgText);
+    Mono<MessageTextProcessorResult> process(String msgText);
 }

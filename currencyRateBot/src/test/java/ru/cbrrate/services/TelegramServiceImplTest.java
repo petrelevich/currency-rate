@@ -1,6 +1,7 @@
 package ru.cbrrate.services;
 
 import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Mono;
 import ru.cbrrate.clients.TelegramClient;
 import ru.cbrrate.model.GetUpdatesRequest;
 import ru.cbrrate.model.GetUpdatesResponse;
@@ -21,7 +22,7 @@ class TelegramServiceImplTest {
         var text = "text";
         var messageTextProcessor = mock(MessageTextProcessor.class);
         var reply = "Ok";
-        when(messageTextProcessor.process(text)).thenReturn(new MessageTextProcessorResult(reply, null));
+        when(messageTextProcessor.process(text)).thenReturn(Mono.just(new MessageTextProcessorResult(reply, null)));
 
         var lastUpdateIdKeeper = spy(new LastUpdateIdKeeperImpl());
         var telegramService = new TelegramServiceImpl(telegramClient, messageTextProcessor, lastUpdateIdKeeper);

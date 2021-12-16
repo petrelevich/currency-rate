@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 import ru.cbrrate.model.MessageTextProcessorResult;
 
 
@@ -21,7 +22,7 @@ public class MessageTextProcessorGeneral implements MessageTextProcessor {
     }
 
     @Override
-    public MessageTextProcessorResult process(String msgText) {
+    public Mono<MessageTextProcessorResult> process(String msgText) {
         for(var cmd : CmdRegistry.values()) {
             if (cmd.getCmd().equals(msgText)) {
                 var handler = applicationContext.getBean(cmd.getHandlerName(), MessageTextProcessor.class);

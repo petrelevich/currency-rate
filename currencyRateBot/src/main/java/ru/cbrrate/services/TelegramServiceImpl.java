@@ -9,7 +9,7 @@ import ru.cbrrate.services.processors.MessageTextProcessor;
 
 
 @Slf4j
-public class TelegramServiceImpl implements TelegramService{
+public class TelegramServiceImpl implements TelegramService {
 
     private final TelegramClient telegramClient;
     private final MessageTextProcessor processorGeneral;
@@ -42,7 +42,7 @@ public class TelegramServiceImpl implements TelegramService{
     private long processResponse(GetUpdatesResponse response) {
         log.info("response.getResult().size:{}", response.getResult().size());
         long lastUpdateId = 0;
-        for(var responseMsg : response.getResult()) {
+        for (var responseMsg : response.getResult()) {
             lastUpdateId = Math.max(lastUpdateId, responseMsg.getUpdateId());
             processMessage(responseMsg.getMessage());
         }
@@ -56,9 +56,12 @@ public class TelegramServiceImpl implements TelegramService{
         var chatId = message.getChat().getId();
         var messageId = message.getMessageId();
 
-        var result  = processorGeneral.process(message.getText());
-        var replay = result.getFailReply() == null ? result.getOkReply() : result.getFailReply();
-        var sendMessageRequest = new SendMessageRequest(chatId, replay, messageId);
-        telegramClient.sendMessage(sendMessageRequest);
+        processorGeneral.process(message.getText())
+                .doOnNext(result -> {
+                            var replay = result.getFailReply() == null ? result.getOkReply() : result.getFailReply();
+                            var sendMessageRequest = new SendMessageRequest(chatId, replay, messageId);
+                            telegramClient.sendMessage(sendMessageRequest);
+                        }
+                ).subscribe();
     }
 }
