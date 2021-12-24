@@ -28,6 +28,9 @@ allprojects {
             imports {
                 mavenBom("org.springframework.boot:spring-boot-dependencies:2.6.1")
             }
+            dependency "io.projectreactor:reactor-test:${Versions.reactorTest}"
+            dependency "org.testcontainers:junit-jupiter:${Versions.testcontainers}"
+            dependency "org.testcontainers:kafka:${Versions.testcontainers}"
         }
     }
 

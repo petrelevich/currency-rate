@@ -1,7 +1,7 @@
 jib {
     container.creationTime = 'USE_CURRENT_TIMESTAMP'
     from {
-        image = 'bellsoft/liberica-openjdk-alpine-musl:15.0.2-10-x86_64'
+        image = 'bellsoft/bellsoft/liberica-openjdk-alpine-musl:17.0.1-12'
     }
     to {
         tags = ['v3', 'latest']

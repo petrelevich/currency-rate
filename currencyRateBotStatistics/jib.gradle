@@ -5,7 +5,7 @@ jib {
     }
     to {
         tags = ['v1', 'latest']
-        image = 'registry.gitlab.com/petrelevich/dockerregistry/cbr-rate'
+        image = 'registry.gitlab.com/petrelevich/dockerregistry/currency-rate-bot-statistics'
         auth {
             username = gitlabUser
             password = gitlabPassword
@@ -15,6 +15,6 @@ jib {
 // ./gradlew jibDockerBuild
 
 //docker login registry.gitlab.com
-//docker run -p 8080:8080 registry.gitlab.com/petrelevich/dockerregistry/cbr-rate
+//docker run -p 8080:8080 registry.gitlab.com/petrelevich/dockerregistry/currency-rate-bot-statistics
 
-//docker push registry.gitlab.com/petrelevich/dockerregistry/cbr-rate:latest
+//docker push registry.gitlab.com/petrelevich/dockerregistry/currency-rate-bot-statistics:latest
