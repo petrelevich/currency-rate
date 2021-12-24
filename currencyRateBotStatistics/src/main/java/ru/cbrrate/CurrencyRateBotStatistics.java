@@ -6,8 +6,8 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 
 
 @SpringBootApplication
-public class CurrencyRateBotResponseProvider {
+public class CurrencyRateBotStatistics {
     public static void main(String[] args) {
-        new SpringApplicationBuilder().sources(CurrencyRateBotResponseProvider.class).run(args);
+        new SpringApplicationBuilder().sources(CurrencyRateBotStatistics.class).run(args);
     }
 }
